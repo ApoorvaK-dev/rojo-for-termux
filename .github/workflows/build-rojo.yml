@@ -1,0 +1,26 @@
+name: Build Rojo for Termux (ARM64)
+
+# This allows you to manually trigger the build from the GitHub Actions tab
+on: [workflow_dispatch] 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Rojo Source Code
+        uses: actions/checkout@v4
+        with:
+          repository: rojo-rbx/rojo
+          
+      - name: Install Cross (Cross-Compilation Tool)
+        run: cargo install cross --git https://github.com/cross-rs/cross
+
+      - name: Build Statically Linked Rojo for Termux
+        run: cross build --release --target aarch64-unknown-linux-musl
+
+      - name: Upload Binary Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rojo-termux-binary
+          path: target/aarch64-unknown-linux-musl/release/rojo
+          
